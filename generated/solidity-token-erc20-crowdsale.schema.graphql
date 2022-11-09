@@ -1,0 +1,235 @@
+type Account @entity {
+	id: Bytes!
+	asERC20: ERC20Contract
+	ERC20balances: [ERC20Balance!]! @derivedFrom(field: "account")
+	ERC20approvalsOwner: [ERC20Approval!]! @derivedFrom(field: "owner")
+	ERC20approvalsSpender: [ERC20Approval!]! @derivedFrom(field: "spender")
+	ERC20transferFromEvent: [ERC20Transfer!]! @derivedFrom(field: "from")
+	ERC20transferToEvent: [ERC20Transfer!]! @derivedFrom(field: "to")
+	asAccessControl: AccessControl
+	membership: [AccessControlRoleMember!]! @derivedFrom(field: "account")
+	roleGranted: [RoleGranted!]! @derivedFrom(field: "account")
+	roleGrantedSender: [RoleGranted!]! @derivedFrom(field: "sender")
+	roleRevoked: [RoleRevoked!]! @derivedFrom(field: "account")
+	roleRevokedSender: [RoleRevoked!]! @derivedFrom(field: "sender")
+	asPausable: Pausable
+	asCrowdSale: CrowdSaleContract
+	crowdSaleTokenPurchaseFromEvent: [CrowdSaleTokenPurchase!]! @derivedFrom(field: "purchaser")
+	crowdSaleTokenPurchaseToEvent: [CrowdSaleTokenPurchase!]! @derivedFrom(field: "beneficiary")
+	asVestingVault: VestingVaultContract
+	vestingLockedInForEvent: [VestingLockedIn!]! @derivedFrom(field: "beneficiary")
+	vestingReleasedToEvent: [VestingReleased!]! @derivedFrom(field: "beneficiary")
+	vestingVaultVestings: [Vesting!]! @derivedFrom(field: "beneficiary")
+	asVestingWallet: VestingWalletContract
+	etherReleasedToEvents: [EtherReleased!]! @derivedFrom(field: "to")
+	etherReleasedFromEvents: [EtherReleased!]! @derivedFrom(field: "from")
+	ERC20ReleasedToEvents: [ERC20Released!]! @derivedFrom(field: "to")
+	ERC20ReleasedFromEvents: [ERC20Released!]! @derivedFrom(field: "from")
+	events: [Event!]! @derivedFrom(field: "emitter")
+}
+type ERC20Contract @entity(immutable: true) {
+	id: Bytes!
+	asAccount: Account!
+	name: String
+	symbol: String
+	decimals: Int!
+	totalSupply: ERC20Balance!
+	balances: [ERC20Balance!]! @derivedFrom(field: "contract")
+	approvals: [ERC20Approval!]! @derivedFrom(field: "contract")
+	transfers: [ERC20Transfer!]! @derivedFrom(field: "contract")
+}
+type ERC20Balance @entity {
+	id: ID!
+	contract: ERC20Contract!
+	account: Account
+	value: BigDecimal!
+	valueExact: BigInt!
+	transferFromEvent: [ERC20Transfer!]! @derivedFrom(field: "fromBalance")
+	transferToEvent: [ERC20Transfer!]! @derivedFrom(field: "toBalance")
+}
+type ERC20Approval @entity {
+	id: ID!
+	contract: ERC20Contract!
+	owner: Account!
+	spender: Account!
+	value: BigDecimal!
+	valueExact: BigInt!
+}
+type ERC20Transfer implements Event @entity(immutable: true) {
+	id: ID!
+	emitter: Account!
+	transaction: Transaction!
+	timestamp: BigInt!
+	contract: ERC20Contract!
+	from: Account
+	fromBalance: ERC20Balance
+	to: Account
+	toBalance: ERC20Balance
+	value: BigDecimal!
+	valueExact: BigInt!
+}
+type AccessControl @entity(immutable: true) {
+	id: Bytes!
+	asAccount: Account!
+	roles: [AccessControlRole!]! @derivedFrom(field: "contract")
+}
+type Role @entity(immutable: true) {
+	id: Bytes!
+	roleOf: [AccessControlRole!]! @derivedFrom(field: "role")
+}
+type AccessControlRole @entity {
+	id: ID!
+	contract: AccessControl!
+	role: Role!
+	admin: AccessControlRole!
+	adminOf: [AccessControlRole!]! @derivedFrom(field: "admin")
+	members: [AccessControlRoleMember!]! @derivedFrom(field: "accesscontrolrole")
+	roleGranted: [RoleGranted!]! @derivedFrom(field: "role")
+	roleRevoked: [RoleRevoked!]! @derivedFrom(field: "role")
+	roleAdminChanged: [RoleAdminChanged!]! @derivedFrom(field: "role")
+}
+type AccessControlRoleMember @entity {
+	id: ID!
+	accesscontrolrole: AccessControlRole!
+	account: Account!
+}
+type RoleAdminChanged implements Event @entity(immutable: true) {
+	id: ID!
+	emitter: Account!
+	transaction: Transaction!
+	timestamp: BigInt!
+	role: AccessControlRole!
+	newAdminRole: AccessControlRole!
+	previousAdminRole: AccessControlRole!
+}
+type RoleGranted implements Event @entity(immutable: true) {
+	id: ID!
+	emitter: Account!
+	transaction: Transaction!
+	timestamp: BigInt!
+	role: AccessControlRole!
+	account: Account!
+	sender: Account!
+}
+type RoleRevoked implements Event @entity(immutable: true) {
+	id: ID!
+	emitter: Account!
+	transaction: Transaction!
+	timestamp: BigInt!
+	role: AccessControlRole!
+	account: Account!
+	sender: Account!
+}
+type Pausable @entity {
+	id: Bytes!
+	asAccount: Account!
+	isPaused: Boolean!
+	paused: [Paused!]! @derivedFrom(field: "contract")
+}
+type Paused implements Event @entity(immutable: true) {
+	id: ID!
+	emitter: Account!
+	transaction: Transaction!
+	timestamp: BigInt!
+	contract: Pausable!
+	isPaused: Boolean!
+}
+type CrowdSaleContract @entity {
+	id: ID!
+	asAccount: Account
+	token: ERC20Contract
+	wallet: Account
+	fundsRaised: BigInt
+	initialSupply: BigInt
+	tokensAvailable: BigInt
+	tokenPurchases: [CrowdSaleTokenPurchase!]! @derivedFrom(field: "contract")
+}
+type CrowdSaleTokenPurchase implements Event @entity {
+	id: ID!
+	emitter: Account!
+	transaction: Transaction!
+	timestamp: BigInt!
+	beneficiary: Account!
+	purchaser: Account!
+	weiValue: BigInt!
+	tokenAmount: BigInt!
+	contract: CrowdSaleContract!
+}
+type VestingVaultContract @entity {
+	id: ID!
+	asAccount: Account!
+	token: ERC20Contract
+	vestings: [Vesting!]! @derivedFrom(field: "contract")
+	vestingsLockedIn: [VestingLockedIn!]! @derivedFrom(field: "contract")
+	vestingsReleased: [VestingReleased!]! @derivedFrom(field: "contract")
+}
+type Vesting @entity {
+	id: ID!
+	contract: VestingVaultContract!
+	beneficiary: Account!
+	tokenAmount: BigInt!
+	releaseTime: BigInt!
+}
+type VestingLockedIn implements Event @entity {
+	id: ID!
+	emitter: Account!
+	transaction: Transaction!
+	timestamp: BigInt!
+	contract: VestingVaultContract!
+	beneficiary: Account!
+	tokenAmount: BigInt!
+	releaseTime: BigInt!
+}
+type VestingReleased implements Event @entity {
+	id: ID!
+	emitter: Account!
+	transaction: Transaction!
+	timestamp: BigInt!
+	contract: VestingVaultContract!
+	beneficiary: Account!
+	tokenAmount: BigInt!
+}
+type VestingWalletContract @entity {
+	id: ID!
+	asAccount: Account!
+	beneficiary: Account
+	start: BigInt
+	duration: BigInt
+	etherReleased: BigInt!
+	erc20Released: BigInt!
+	etherReleasedEvents: [EtherReleased!]! @derivedFrom(field: "contract")
+	erc20ReleasedEvents: [ERC20Released!]! @derivedFrom(field: "contract")
+}
+type EtherReleased implements Event @entity {
+	id: ID!
+	emitter: Account!
+	transaction: Transaction!
+	timestamp: BigInt!
+	amount: BigInt!
+	from: Account
+	to: Account
+	contract: VestingWalletContract!
+}
+type ERC20Released implements Event @entity {
+	id: ID!
+	emitter: Account!
+	transaction: Transaction!
+	timestamp: BigInt!
+	amount: BigInt!
+	from: Account
+	to: Account
+	token: ERC20Contract!
+	contract: VestingWalletContract!
+}
+interface Event {
+	id: ID!
+	transaction: Transaction!
+	emitter: Account!
+	timestamp: BigInt!
+}
+type Transaction @entity(immutable: true) {
+	id: ID!
+	timestamp: BigInt!
+	blockNumber: BigInt!
+	events: [Event!]! @derivedFrom(field: "transaction")
+}

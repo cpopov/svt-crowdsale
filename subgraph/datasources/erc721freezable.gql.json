@@ -1,0 +1,21 @@
+[
+  {
+    "name": "ERC721TokenAttribute",
+    "fields": [
+      { "name": "metadata", "type": "ERC721TokenMetadata!" },
+      { "name": "traitType", "type": "String!" },
+      { "name": "value", "type": "String!" },
+      { "name": "maxValue", "type": "BigInt" },
+      { "name": "displayType", "type": "String" }
+    ]
+  },
+  {
+    "name": "ERC721TokenMetadata",
+    "fields": [
+      { "name": "name", "type": "String" },
+      { "name": "description", "type": "String" },
+      { "name": "image", "type": "String" },
+      { "name": "attributes", "type": "ERC721TokenAttribute!", "derived": "metadata" }
+    ]
+  }
+]

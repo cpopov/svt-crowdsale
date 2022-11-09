@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Account",
+    "fields": [
+      { "name": "id", "type": "Bytes!" },
+      { "name": "asCrowdSale", "type": "CrowdSaleContract" },
+      { "name": "crowdSaleTokenPurchaseFromEvent", "type": "CrowdSaleTokenPurchase!", "derived": "purchaser" },
+      { "name": "crowdSaleTokenPurchaseToEvent", "type": "CrowdSaleTokenPurchase!", "derived": "beneficiary" }
+    ]
+  },
+  {
+    "name": "CrowdSaleContract",
+    "fields": [
+      { "name": "asAccount", "type": "Account" },
+      { "name": "token", "type": "ERC20Contract" },
+      { "name": "wallet", "type": "Account" },
+      { "name": "fundsRaised", "type": "BigInt" },
+      { "name": "initialSupply", "type": "BigInt" },
+      { "name": "tokensAvailable", "type": "BigInt" },
+      { "name": "tokenPurchases", "type": "CrowdSaleTokenPurchase!", "derived": "contract" }
+    ]
+  },
+  {
+    "name": "CrowdSaleTokenPurchase",
+    "parent": "Event",
+    "fields": [
+      { "name": "emitter", "type": "Account!" },
+      { "name": "transaction", "type": "Transaction!" },
+      { "name": "timestamp", "type": "BigInt!" },
+      { "name": "beneficiary", "type": "Account!" },
+      { "name": "purchaser", "type": "Account!" },
+      { "name": "weiValue", "type": "BigInt!" },
+      { "name": "tokenAmount", "type": "BigInt!" },
+      { "name": "contract", "type": "CrowdSaleContract!" }
+    ]
+  }
+]

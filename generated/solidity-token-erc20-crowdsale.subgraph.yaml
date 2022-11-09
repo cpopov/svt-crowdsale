@@ -1,0 +1,184 @@
+specVersion: 0.0.4
+schema:
+  file: solidity-token-erc20-crowdsale.schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: erc20
+    network: localhost
+    source:
+      address: "0x44fBd0921236e3C6ebA7aE946087ABE72B64c383"
+      abi: IERC20
+      startBlock: 9
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - ERC20Contract
+      abis:
+        - name: IERC20
+          file: ../node_modules/@openzeppelin/contracts/build/contracts/IERC20Metadata.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ../node_modules/@openzeppelin/subgraphs/src/datasources/erc20.ts
+  - kind: ethereum/contract
+    name: accesscontrol
+    network: localhost
+    source:
+      address: "0x44fBd0921236e3C6ebA7aE946087ABE72B64c383"
+      abi: AccessControl
+      startBlock: 9
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - AccessControl
+      abis:
+        - name: AccessControl
+          file: ../node_modules/@openzeppelin/contracts/build/contracts/IAccessControl.json
+      eventHandlers:
+        - event: RoleAdminChanged(indexed bytes32,indexed bytes32,indexed bytes32)
+          handler: handleRoleAdminChanged
+        - event: RoleGranted(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleGranted
+        - event: RoleRevoked(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleRevoked
+      file: ../node_modules/@openzeppelin/subgraphs/src/datasources/accesscontrol.ts
+  - kind: ethereum/contract
+    name: pausable
+    network: localhost
+    source:
+      address: "0xd35ee2d9439a6b77a42072e1D96ef5A152A220Ff"
+      abi: Pausable
+      startBlock: 13
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Pausable
+      abis:
+        - name: Pausable
+          file: ../node_modules/@openzeppelin/contracts/build/contracts/Pausable.json
+      eventHandlers:
+        - event: Paused(address)
+          handler: handlePaused
+        - event: Unpaused(address)
+          handler: handleUnpaused
+      file: ../node_modules/@openzeppelin/subgraphs/src/datasources/pausable.ts
+  - kind: ethereum/contract
+    name: accesscontrol-3
+    network: localhost
+    source:
+      address: "0xd35ee2d9439a6b77a42072e1D96ef5A152A220Ff"
+      abi: AccessControl
+      startBlock: 13
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - AccessControl
+      abis:
+        - name: AccessControl
+          file: ../node_modules/@openzeppelin/contracts/build/contracts/IAccessControl.json
+      eventHandlers:
+        - event: RoleAdminChanged(indexed bytes32,indexed bytes32,indexed bytes32)
+          handler: handleRoleAdminChanged
+        - event: RoleGranted(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleGranted
+        - event: RoleRevoked(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleRevoked
+      file: ../node_modules/@openzeppelin/subgraphs/src/datasources/accesscontrol.ts
+  - kind: ethereum/contract
+    name: crowdsale
+    network: localhost
+    source:
+      address: '0xd35ee2d9439a6b77a42072e1D96ef5A152A220Ff'
+      abi: ICrowdSale
+      startBlock: 13
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - ExampleCrowdSale
+      abis:
+        - name: ICrowdSale
+          file: ../abi/ICrowdSale.json
+      eventHandlers:
+        - event: TokensPurchased(indexed address,indexed address,uint256,uint256)
+          handler: handleTokensPurchased
+      file: ../subgraph/datasources/crowdsale.ts
+  - kind: ethereum/contract
+    name: accesscontrol-5
+    network: localhost
+    source:
+      address: "0xbb6AB8bF28d8f027b23f873051AD482066f95C70"
+      abi: AccessControl
+      startBlock: 12
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - AccessControl
+      abis:
+        - name: AccessControl
+          file: ../node_modules/@openzeppelin/contracts/build/contracts/IAccessControl.json
+      eventHandlers:
+        - event: RoleAdminChanged(indexed bytes32,indexed bytes32,indexed bytes32)
+          handler: handleRoleAdminChanged
+        - event: RoleGranted(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleGranted
+        - event: RoleRevoked(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleRevoked
+      file: ../node_modules/@openzeppelin/subgraphs/src/datasources/accesscontrol.ts
+  - kind: ethereum/contract
+    name: vestingvault
+    network: localhost
+    source:
+      address: '0xbb6AB8bF28d8f027b23f873051AD482066f95C70'
+      abi: IVestingVault
+      startBlock: 12
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - ExampleVestingVault
+      abis:
+        - name: IVestingVault
+          file: ../abi/IVestingVault.json
+      eventHandlers:
+        - event: VestingLockedIn(indexed address,uint256,uint256)
+          handler: handleVestingLockedIn
+        - event: VestingReleased(indexed address,uint256,uint256)
+          handler: handleVestingReleased
+      file: ../subgraph/datasources/vestingvault.ts
+  - kind: ethereum/contract
+    name: vestingwallet
+    network: localhost
+    source:
+      address: '0x7b1C3abc73C61615287DF369D06Aba095FaBF2F8'
+      abi: VestingWallet
+      startBlock: 10
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - ExampleVestingWallet
+      abis:
+        - name: VestingWallet
+          file: ../node_modules/@openzeppelin/contracts/build/contracts/VestingWallet.json
+      eventHandlers:
+        - event: ERC20Released(indexed address,uint256)
+          handler: handleERC20Released
+        - event: EtherReleased(uint256)
+          handler: handleEtherReleased
+      file: ../subgraph/datasources/vestingwallet.ts
